@@ -1,0 +1,15 @@
+{ "translations": {
+    "Loading diagram..." : "Läser in diagram...",
+    "Error: This is not a Drawio file!" : "Fel: Detta är inte en Drawio-fil!",
+    "Error: Failed to load the file!" : "Fel: Kunde inte läsa in filen!",
+    "File is currently being used by somebody else" : "Filen används för närvarande av någon annan",
+    "Saving..." : "Sparar...",
+    "Saved" : "Sparad",
+    "Error: Could not save file!" : "Fel: Kunde inte spara filen!",
+    "Failed to create a new file." : "Det gick inte att skapa en ny fil.",
+    "Open in Draw.io" : "Öppna i Draw.io",
+    "Diagram" : "Diagram",
+    "New Diagram.drawio" : "Nytt diagram.drawio",
+    "There was an error loading the diagram file. Check permissions and try again." : "Ett fel uppstod när diagramfilen lästes in. Kontrollera behörigheterna och försök igen."
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
