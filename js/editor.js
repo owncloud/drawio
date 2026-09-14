@@ -38,7 +38,33 @@
 		return nodes[0].textContent;
 	}
 
-	OCA.Drawio.LoadEditorHandler = function (eventHandler, path, editWindow) {
+	
+function startLockPing(fileClient, path) {
+	if (OCA.Drawio.lockPingInterval) {
+		clearInterval(OCA.Drawio.lockPingInterval);
+	}
+
+	OCA.Drawio.lockPingInterval = setInterval(function () {
+		fileClient.lock(path)
+			.then(function (status, contents) {
+				var xml = contents.xhr.responseXML;
+				var activelock = xml.getElementsByTagNameNS('DAV:', 'activelock');
+				if (activelock.length) {
+					var tokenNode = activelock[0].getElementsByTagNameNS('DAV:', 'locktoken')[0];
+					var newToken = getHrefNodeContents(tokenNode);
+					if (newToken && newToken !== OCA.Drawio.currentLockToken) {
+						OCA.Drawio.currentLockToken = newToken;
+					}
+				}
+			})
+			.fail(function () {
+				// silent fail
+			});
+	}, 30000);
+}
+
+
+OCA.Drawio.LoadEditorHandler = function (eventHandler, path, editWindow) {
 		// Set page title for webbrowser tab window
 		window.document.title = path.split("/").pop() + ' - ' + oc_defaults.title;
 		// Handle the load event at the start of the page load
@@ -59,6 +85,7 @@
 								action: "template",
 								name: path
 							}), "*");
+				startLockPing(fileClient, path);
 						} else if (contents.indexOf("mxGraphModel") === -1 && contents.indexOf("mxfile") === -1) {
 							// If the contents is something else, we just error and exit
 							OC.Notification.show(t(OCA.Drawio.AppName, "Error: This is not a Drawio file!"));
@@ -107,7 +134,8 @@
 
 	OCA.Drawio.ExitHandler = function (eventHandler, path) {
 		OCA.Drawio.unlock(path, OCA.Drawio.currentLockToken)
-			.done(function () {
+			clearInterval(OCA.Drawio.lockPingInterval);
+				.done(function () {
 				// Stop listening
 				window.removeEventListener("message", eventHandler);
 				window.close();
